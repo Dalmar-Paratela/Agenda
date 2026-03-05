@@ -36,12 +36,18 @@ https://SEU_USUARIO.github.io/SEU_REPOSITORIO/
 
 ## Sincronizacao de alteracoes locais
 
-Sempre que alterar arquivos na pasta local:
+Fluxo manual:
 
 ```bash
 git add .
 git commit -m "sua mensagem"
 git push
+```
+
+Fluxo rapido com script:
+
+```powershell
+.\sync.ps1 "sua mensagem"
 ```
 
 Isso sincroniza com o GitHub e dispara novo deploy automaticamente.
