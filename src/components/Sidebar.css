@@ -1,0 +1,117 @@
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    height: 100vh;
+}
+
+.sidebar-header {
+    padding-bottom: 32px;
+    padding-left: 12px;
+}
+
+.sidebar-header .sidebar-logo {
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.emoji {
+    margin-right: 4px;
+    font-size: 20px;
+}
+
+.brand-gama {
+    color: #FF8C00;
+    /* Dark Orange */
+}
+
+.brand-nager {
+    color: #000000;
+}
+
+.sidebar-menu {
+    flex: 1;
+}
+
+.menu-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    font-weight: 600;
+    padding-left: 12px;
+    margin-bottom: 12px;
+    display: block;
+    letter-spacing: 0.5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    color: var(--text-gray);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+}
+
+.menu-item.active {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+.menu-item span {
+    margin-left: 12px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+.upgrade-card {
+    background: linear-gradient(135deg, #FFE8E5 0%, #E0EBFF 100%);
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+}
+
+.upgrade-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #1F2937;
+}
+
+.upgrade-card p {
+    font-size: 12px;
+    color: var(--text-gray);
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.btn-upgrade {
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+    padding: 8px 0;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.bottom-nav {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}

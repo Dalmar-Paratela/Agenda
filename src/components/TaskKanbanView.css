@@ -1,0 +1,294 @@
+.task-kanban-view {
+    display: flex;
+    height: 100%;
+    animation: fadeIn 0.3s;
+    overflow-x: auto;
+    padding-bottom: 16px;
+}
+
+.kanban-board {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    min-width: min-content;
+    align-items: flex-start;
+}
+
+.kanban-column {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-color);
+    padding: 16px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.kanban-column.drag-over {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    background-color: #f5f8ff;
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.kanban-column-header h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-count {
+    background: var(--bg-color);
+    color: var(--text-gray);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+}
+
+.column-header-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.btn-add-task {
+    color: var(--text-gray);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.btn-add-task:hover {
+    background: var(--bg-color);
+    color: var(--primary-blue);
+}
+
+.btn-delete-column {
+    color: var(--text-light);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.btn-delete-column:hover {
+    background: #FEE2E2;
+    color: #EF4444;
+}
+
+.kanban-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 40px;
+}
+
+.kanban-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    cursor: grab;
+    transition: all 0.15s;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+}
+
+.kanban-card:hover {
+    border-color: var(--primary-blue);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.kanban-card:active,
+.kanban-card.dragging {
+    cursor: grabbing;
+    opacity: 0.45;
+    transform: rotate(1.5deg) scale(1.02);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-blue);
+}
+
+.kanban-card-drag-handle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: var(--text-light);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.kanban-card:hover .kanban-card-drag-handle {
+    opacity: 1;
+}
+
+.kanban-card-tags {
+    margin-bottom: 10px;
+}
+
+.kanban-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+    line-height: 1.4;
+    padding-right: 16px;
+}
+
+.kanban-card-category {
+    font-size: 12px;
+    color: var(--text-light);
+    display: block;
+    margin-bottom: 14px;
+}
+
+.kanban-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+}
+
+.kanban-card-metrics {
+    display: flex;
+    gap: 12px;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-gray);
+}
+
+.kanban-card-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-gray);
+    background: var(--bg-color);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+}
+
+/* Inline add task form */
+.kanban-inline-form {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.kanban-input {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--text-dark);
+    width: 100%;
+    transition: border-color 0.15s;
+}
+
+.kanban-input:focus {
+    border-color: var(--primary-blue);
+    outline: none;
+}
+
+.inline-form-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-confirm-inline {
+    background: var(--primary-blue);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-confirm-inline:hover {
+    background: var(--primary-blue-hover);
+}
+
+.btn-cancel-inline {
+    color: var(--text-gray);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.btn-cancel-inline:hover {
+    background: var(--border-color);
+    color: var(--text-dark);
+}
+
+/* Add column */
+.kanban-add-column-form {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--white);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-add-column {
+    width: 220px;
+    flex-shrink: 0;
+    border: 2px dashed var(--border-color);
+    background: transparent;
+    color: var(--text-gray);
+    padding: 14px 20px;
+    border-radius: var(--radius-lg);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    align-self: flex-start;
+}
+
+.btn-add-column:hover {
+    background: var(--white);
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+.tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+}
