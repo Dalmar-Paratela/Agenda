@@ -223,3 +223,24 @@
     background: #1a1a1a;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.tasks-loading {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--text-gray);
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.tasks-error {
+    margin-bottom: 16px;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+}

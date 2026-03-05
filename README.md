@@ -1,6 +1,41 @@
 # Gamanager
 
-Aplicativo React + Vite com deploy automatico no GitHub Pages.
+Aplicativo React + Vite com autenticacao (cadastro/login) e banco por usuario usando Supabase.
+
+## O que foi implementado
+
+- Cadastro e login com email/senha (Supabase Auth)
+- Sessao do usuario no app (login/logout)
+- Tarefas e colunas Kanban persistidas em Postgres
+- Isolamento por usuario com Row Level Security (RLS)
+- Deploy automatico no GitHub Pages a cada push na branch `main`
+
+## Seguranca
+
+Nao existe sistema 100% a prova de ataque, mas este projeto usa praticas robustas:
+
+- Senha nao fica no front-end; autenticacao e hash sao gerenciados pelo Supabase Auth
+- As tabelas usam RLS com `auth.uid() = user_id`
+- Um usuario autenticado so consegue ler/escrever os proprios dados
+- O front-end usa chave anonima (segura com RLS) e nunca chave de servico
+
+## Configuracao do banco (Supabase)
+
+1. Crie um projeto em https://supabase.com
+2. No painel do projeto, abra `SQL Editor`
+3. Execute o arquivo [`supabase/schema.sql`](supabase/schema.sql)
+4. Em `Authentication > Providers`, deixe Email habilitado
+5. Em `Authentication > URL Configuration`, adicione a URL do seu app (local e producao)
+
+## Variaveis de ambiente
+
+1. Copie `.env.example` para `.env.local`
+2. Preencha com seus valores do Supabase:
+
+```bash
+VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+VITE_SUPABASE_ANON_KEY=SUA_CHAVE_ANONIMA_SUPABASE
+```
 
 ## Rodar localmente
 
@@ -11,27 +46,17 @@ npm run dev
 
 ## Publicacao na nuvem (GitHub Pages)
 
-1. Crie um repositorio vazio no GitHub (exemplo: `gamanager`).
-2. Conecte o remoto local:
+A cada push na `main`, o workflow `.github/workflows/deploy.yml` publica nova versao.
 
-```bash
-git remote add origin https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
-```
+Antes do primeiro deploy, configure em `Settings > Secrets and variables > Actions`:
 
-3. Envie para a branch principal:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
-```bash
-git push -u origin main
-```
-
-4. No GitHub, va em `Settings > Pages` e deixe `Source` como `GitHub Actions`.
-
-A cada `push` na `main`, o workflow `.github/workflows/deploy.yml` publica uma nova versao.
-
-Link esperado do app:
+URL do projeto:
 
 ```text
-https://SEU_USUARIO.github.io/SEU_REPOSITORIO/
+https://dalmar-paratela.github.io/Agenda/
 ```
 
 ## Sincronizacao de alteracoes locais
@@ -50,4 +75,9 @@ Fluxo rapido com script:
 .\sync.ps1 "sua mensagem"
 ```
 
-Isso sincroniza com o GitHub e dispara novo deploy automaticamente.
+## Estrutura relevante
+
+- `src/pages/AuthPage.tsx`: cadastro/login
+- `src/lib/supabase.ts`: cliente Supabase
+- `src/pages/MyTasks.tsx`: leitura/escrita de tarefas e colunas por usuario
+- `supabase/schema.sql`: tabelas, trigger e politicas RLS
