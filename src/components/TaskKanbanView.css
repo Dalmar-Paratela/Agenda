@@ -128,12 +128,16 @@
     top: 10px;
     right: 10px;
     color: var(--text-light);
-    opacity: 0;
-    transition: opacity 0.15s;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    z-index: 10;
 }
 
-.kanban-card:hover .kanban-card-drag-handle {
-    opacity: 1;
+.kanban-card-drag-handle:hover {
+    color: var(--text-dark);
+    background: var(--bg-color);
 }
 
 .kanban-card-title {
@@ -143,24 +147,6 @@
     margin-bottom: 4px;
     line-height: 1.4;
     padding-right: 28px;
-}
-
-.btn-card-more {
-    position: absolute;
-    top: 12px;
-    right: 8px;
-    color: var(--text-light);
-    padding: 2px;
-    border-radius: var(--radius-sm);
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    background: transparent;
-}
-
-.btn-card-more:hover {
-    background: var(--bg-color);
-    color: var(--text-dark);
 }
 
 .card-context-menu {
@@ -178,6 +164,7 @@
     flex-direction: column;
     gap: 2px;
     animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: default;
 }
 
 @keyframes slideDown {
@@ -204,6 +191,8 @@
     width: 100%;
     text-align: left;
     background: transparent;
+    cursor: pointer;
+    border: none;
 }
 
 .menu-item:hover {

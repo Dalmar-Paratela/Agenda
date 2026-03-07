@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './TaskKanbanView.css';
-import { Paperclip, MessageSquare, Plus, Clock, X, GripVertical, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { Paperclip, MessageSquare, Plus, Clock, X, GripVertical, Edit2, Trash2 } from 'lucide-react';
 import type { Task, KanbanColumn } from '../pages/MyTasks';
 
 interface Props {
@@ -33,6 +33,18 @@ export function TaskKanbanView({
   const [newColumnTitle, setNewColumnTitle] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (activeMenuId === null) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setActiveMenuId(null);
+      }
+    }
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [activeMenuId]);
 
   const tasksByColumn = useMemo(() => {
     const map = new Map<string, Task[]>();
@@ -181,7 +193,15 @@ export function TaskKanbanView({
                   onDragStart={(event) => handleDragStart(event, task.id, column.id)}
                   onDragEnd={handleDragEnd}
                 >
-                  <div className="kanban-card-drag-handle">
+                  <div
+                    className="kanban-card-drag-handle"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setActiveMenuId(activeMenuId === task.id ? null : task.id);
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                  >
                     <GripVertical size={14} />
                   </div>
                   <div className="kanban-card-tags">
@@ -190,25 +210,23 @@ export function TaskKanbanView({
                     </span>
                   </div>
                   <h4 className="kanban-card-title">{task.title}</h4>
-                  <button
-                    className="btn-card-more"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveMenuId(activeMenuId === task.id ? null : task.id);
-                    }}
-                  >
-                    <MoreVertical size={14} />
-                  </button>
 
                   {activeMenuId === task.id && (
-                    <div className="card-context-menu" onClick={(e) => e.stopPropagation()}>
-                      <button className="menu-item" onClick={() => { onEditTask(task); setActiveMenuId(null); }}>
+                    <div
+                      ref={menuRef}
+                      className="card-context-menu"
+                      draggable={false}
+                      onDragStart={(e) => e.preventDefault()}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button className="menu-item" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); onEditTask(task); setActiveMenuId(null); }}>
                         <Edit2 size={12} /> Editar
                       </button>
-                      <button className="menu-item danger" onClick={() => { if (confirm('Deseja realmente deletar esta tarefa?')) { void onDeleteTask(task.id); setActiveMenuId(null); } }}>
+                      <button className="menu-item danger" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); const taskId = task.id; setActiveMenuId(null); setTimeout(() => { if (window.confirm('Deseja realmente deletar esta tarefa?')) { void onDeleteTask(taskId); } }, 50); }}>
                         <Trash2 size={12} /> Deletar
                       </button>
-                      <button className="menu-item" onClick={() => setActiveMenuId(null)}>
+                      <button className="menu-item" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
                         <X size={12} /> Sair
                       </button>
                     </div>
@@ -303,10 +321,6 @@ export function TaskKanbanView({
       </div>
 
       {errorMessage && <div className="kanban-error">{errorMessage}</div>}
-
-      {activeMenuId !== null && (
-        <div className="menu-overlay" onClick={() => setActiveMenuId(null)} />
-      )}
     </div>
   );
 }

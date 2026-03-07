@@ -137,11 +137,48 @@
     color: var(--text-light);
     padding: 4px;
     border-radius: var(--radius-sm);
+    background: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-more:hover {
     background: var(--bg-color);
     color: var(--text-dark);
+}
+
+.task-actions-wrapper {
+    position: relative;
+}
+
+.list-context-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    width: 140px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: default;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .btn-add-dashed {

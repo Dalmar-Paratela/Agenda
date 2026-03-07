@@ -421,7 +421,7 @@ export function MyTasks({ userId }: MyTasksProps) {
         {isLoading ? (
           <div className="tasks-loading">Carregando tarefas...</div>
         ) : viewMode === 'list' ? (
-          <TaskListView tasks={tasks} onNewTask={openModal} />
+          <TaskListView tasks={tasks} onNewTask={openModal} onEditTask={openEditModal} onDeleteTask={handleDeleteTask} />
         ) : (
           <TaskKanbanView
             tasks={tasks}
