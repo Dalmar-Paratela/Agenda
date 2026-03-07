@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import './TaskKanbanView.css';
-import { Paperclip, MessageSquare, Plus, Clock, X, GripVertical } from 'lucide-react';
+import { Paperclip, MessageSquare, Plus, Clock, X, GripVertical, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import type { Task, KanbanColumn } from '../pages/MyTasks';
 
 interface Props {
@@ -10,6 +10,8 @@ interface Props {
   onCreateTaskInColumn: (columnId: string, title: string, category: string) => Promise<void>;
   onCreateColumn: (title: string) => Promise<void>;
   onDeleteColumn: (columnId: string) => Promise<void>;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (taskId: number) => Promise<void>;
 }
 
 export function TaskKanbanView({
@@ -19,6 +21,8 @@ export function TaskKanbanView({
   onCreateTaskInColumn,
   onCreateColumn,
   onDeleteColumn,
+  onEditTask,
+  onDeleteTask,
 }: Props) {
   const [dragState, setDragState] = useState<{ taskId: number; sourceColumnId: string } | null>(null);
   const [dragOverColumnId, setDragOverColumnId] = useState<string | null>(null);
@@ -28,6 +32,7 @@ export function TaskKanbanView({
   const [isAddingColumn, setIsAddingColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
 
   const tasksByColumn = useMemo(() => {
     const map = new Map<string, Task[]>();
@@ -185,6 +190,30 @@ export function TaskKanbanView({
                     </span>
                   </div>
                   <h4 className="kanban-card-title">{task.title}</h4>
+                  <button
+                    className="btn-card-more"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMenuId(activeMenuId === task.id ? null : task.id);
+                    }}
+                  >
+                    <MoreVertical size={14} />
+                  </button>
+
+                  {activeMenuId === task.id && (
+                    <div className="card-context-menu" onClick={(e) => e.stopPropagation()}>
+                      <button className="menu-item" onClick={() => { onEditTask(task); setActiveMenuId(null); }}>
+                        <Edit2 size={12} /> Editar
+                      </button>
+                      <button className="menu-item danger" onClick={() => { if (confirm('Deseja realmente deletar esta tarefa?')) { void onDeleteTask(task.id); setActiveMenuId(null); } }}>
+                        <Trash2 size={12} /> Deletar
+                      </button>
+                      <button className="menu-item" onClick={() => setActiveMenuId(null)}>
+                        <X size={12} /> Sair
+                      </button>
+                    </div>
+                  )}
+
                   <span className="kanban-card-category">{task.category}</span>
                   <div className="kanban-card-footer">
                     <div className="kanban-card-metrics">
@@ -274,6 +303,10 @@ export function TaskKanbanView({
       </div>
 
       {errorMessage && <div className="kanban-error">{errorMessage}</div>}
+
+      {activeMenuId !== null && (
+        <div className="menu-overlay" onClick={() => setActiveMenuId(null)} />
+      )}
     </div>
   );
 }

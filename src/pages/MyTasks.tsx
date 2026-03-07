@@ -102,6 +102,7 @@ export function MyTasks({ userId }: MyTasksProps) {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState('');
@@ -175,6 +176,16 @@ export function MyTasks({ userId }: MyTasksProps) {
     setNewCategory('');
     setNewPriority('Media');
     setNewDays(7);
+    setEditingTask(null);
+    setShowModal(true);
+  }
+
+  function openEditModal(task: Task) {
+    setNewTitle(task.title);
+    setNewCategory(task.category);
+    setNewPriority(task.priority);
+    setNewDays(task.daysLeft);
+    setEditingTask(task);
     setShowModal(true);
   }
 
@@ -216,12 +227,63 @@ export function MyTasks({ userId }: MyTasksProps) {
     setErrorMessage(null);
 
     try {
-      await createTask(firstColumnId, newTitle, newCategory, newPriority, newDays);
+      if (editingTask) {
+        await handleUpdateTask(editingTask.id, {
+          title: newTitle,
+          category: newCategory,
+          priority: newPriority,
+          daysLeft: newDays,
+        });
+      } else {
+        await createTask(firstColumnId, newTitle, newCategory, newPriority, newDays);
+      }
       setShowModal(false);
+      setEditingTask(null);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro ao criar tarefa.';
+      const message = error instanceof Error ? error.message : 'Erro ao salvar tarefa.';
       setErrorMessage(message);
     }
+  }
+
+  async function handleUpdateTask(taskId: number, updates: Partial<Task>) {
+    const priority = updates.priority ? (PRIORITY_OPTIONS.find((option) => option.label === updates.priority) ?? PRIORITY_OPTIONS[1]) : null;
+
+    const payload: any = {};
+    if (updates.title !== undefined) payload.title = updates.title.trim();
+    if (updates.category !== undefined) payload.category = updates.category.trim();
+    if (priority) {
+      payload.priority = priority.label;
+      payload.priority_color = priority.color;
+      payload.priority_text_color = priority.textColor;
+    }
+    if (updates.daysLeft !== undefined) payload.days_left = updates.daysLeft;
+    if (updates.columnId !== undefined) payload.column_id = updates.columnId;
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .update(payload)
+      .eq('id', taskId)
+      .eq('user_id', userId)
+      .select('id, title, category, priority, priority_color, priority_text_color, days_left, status, status_color, status_text_color, attachments, comments, progress, column_id')
+      .single();
+
+    if (error) throw error;
+
+    setTasks((previous) =>
+      previous.map((task) => (task.id === taskId ? mapTaskRow(data as TaskRow) : task))
+    );
+  }
+
+  async function handleDeleteTask(taskId: number) {
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', taskId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+
+    setTasks((previous) => previous.filter((task) => task.id !== taskId));
   }
 
   async function handleMoveTask(taskId: number, targetColumnId: string) {
@@ -231,9 +293,9 @@ export function MyTasks({ userId }: MyTasksProps) {
       currentTasks.map((task) =>
         task.id === taskId
           ? {
-              ...task,
-              columnId: targetColumnId,
-            }
+            ...task,
+            columnId: targetColumnId,
+          }
           : task,
       ),
     );
@@ -289,9 +351,9 @@ export function MyTasks({ userId }: MyTasksProps) {
       currentTasks.map((task) =>
         task.columnId === columnId
           ? {
-              ...task,
-              columnId: fallbackColumn.id,
-            }
+            ...task,
+            columnId: fallbackColumn.id,
+          }
           : task,
       ),
     );
@@ -368,6 +430,8 @@ export function MyTasks({ userId }: MyTasksProps) {
             onCreateTaskInColumn={handleCreateTaskInColumn}
             onCreateColumn={handleCreateColumn}
             onDeleteColumn={handleDeleteColumn}
+            onEditTask={openEditModal}
+            onDeleteTask={handleDeleteTask}
           />
         )}
       </div>
@@ -376,8 +440,8 @@ export function MyTasks({ userId }: MyTasksProps) {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(event) => event.stopPropagation()}>
             <div className="modal-header">
-              <h2>Nova Tarefa</h2>
-              <button className="modal-close" onClick={() => setShowModal(false)}>
+              <h2>{editingTask ? 'Editar Tarefa' : 'Nova Tarefa'}</h2>
+              <button className="modal-close" onClick={() => { setShowModal(false); setEditingTask(null); }}>
                 <X size={20} />
               </button>
             </div>
@@ -420,11 +484,11 @@ export function MyTasks({ userId }: MyTasksProps) {
                 </div>
               </div>
               <div className="modal-actions">
-                <button type="button" className="btn-cancel-modal" onClick={() => setShowModal(false)}>
+                <button type="button" className="btn-cancel-modal" onClick={() => { setShowModal(false); setEditingTask(null); }}>
                   Cancelar
                 </button>
                 <button type="submit" className="btn-submit-modal">
-                  Criar Tarefa
+                  {editingTask ? 'Salvar Alterações' : 'Criar Tarefa'}
                 </button>
               </div>
             </form>
